@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Streamlit
+.streamlit/
+*.port
+
+# Data Cache
+data/cache/
+
+# Environments
+.venv
+venv
+ENV/
+env/
+
+# IDEs
+.vscode/
+.idea/
