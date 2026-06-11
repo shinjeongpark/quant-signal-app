@@ -3,7 +3,7 @@ pandas
 numpy
 yfinance
 pykrx
-FinanceDataReader
+finance-datareader
 plotly
 ta
 pytest
