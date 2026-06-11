@@ -1,9 +1,0 @@
-streamlit
-pandas
-numpy
-yfinance
-pykrx
-finance-datareader
-plotly
-ta
-pytest
