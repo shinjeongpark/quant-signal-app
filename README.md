@@ -1,3 +1,14 @@
+---
+title: Quant Signal App
+emoji: 📈
+colorFrom: blue
+colorTo: green
+sdk: streamlit
+sdk_version: 1.30.0
+app_file: app.py
+pinned: false
+---
+
 # 📈 기술적 퀀트 전략 백테스트 및 매수/매도 신호 웹앱 (MVP)
 
 본 프로젝트는 미국 주식(US) 및 한국 주식(KR) 시장 종목을 대상으로 다양한 기술적 지표 기반 퀀트 트레이딩 알고리즘을 백테스트하고, 파라미터를 최적화하며, 실시간 매수/매도 타점 및 포지션 비중을 계산하여 시각화해주는 **무료 Streamlit 웹 애플리케이션**입니다.
