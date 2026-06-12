@@ -41,14 +41,16 @@ export default function TradingViewChart({ ticker, market, stopLoss, setupType }
 
     // 1. 차트 캔들 데이터 fetch
     fetch(`/api/chart?ticker=${ticker}&market=${market}`)
-      .then(res => res.json())
+      .then(res => {
+        return res.json().then(data => {
+          if (!res.ok || data.error) {
+            return Promise.reject(new Error(data.error + (data.details ? ` (${data.details})` : '')));
+          }
+          return data;
+        });
+      })
       .then((data: CandleData[]) => {
         if (!isMounted) return;
-        if (data.hasOwnProperty('error')) {
-          setError("주가 데이터를 로드할 수 없습니다.");
-          setLoading(false);
-          return;
-        }
 
         // 2. 20일 이동평균선(MA20) 계산 추가
         for (let i = 0; i < data.length; i++) {
@@ -190,7 +192,7 @@ export default function TradingViewChart({ ticker, market, stopLoss, setupType }
       .catch(err => {
         console.error(err);
         if (isMounted) {
-          setError("서버 에러로 데이터를 로드할 수 없습니다.");
+          setError(err.message || "서버 에러로 데이터를 로드할 수 없습니다.");
           setLoading(false);
         }
       });
