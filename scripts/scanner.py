@@ -13,6 +13,10 @@ import numpy as np
 import yfinance as yf
 import FinanceDataReader as fdr
 from supabase import create_client
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
 
 # Supabase 접속을 위한 환경 변수 확인
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
@@ -311,6 +315,9 @@ def check_setup_patterns(df):
             "box_top_dist": round(((high_20 - curr_close)/high_20)*100, 2)
         }
 
+    # volatility_level 지표는 DB에 별도 컬럼이 없으므로 metadata JSON 내에 적재하여 프론트엔드가 참조하도록 처리
+    metadata["volatility_level"] = volatility_level
+
     return {
         "setup_type": setup,
         "stop_loss": stop_loss,
@@ -318,7 +325,6 @@ def check_setup_patterns(df):
         "atr": float(atr14),
         "disparity_200": float(round(disparity_200, 2)),
         "high_52w_dist": float(round(high_52w_dist, 2)),
-        "volatility_level": volatility_level,
         "metadata": metadata
     }
 
