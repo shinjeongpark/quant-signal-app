@@ -31,8 +31,13 @@ export async function GET(request: NextRequest) {
 
   try {
     // 야후 파이낸스 일봉 API 호출 (최근 1년 범위, 일일 주기)
+    // [보안 및 안정성]: 야후 파이낸스가 봇으로 차단하는 것을 방지하기 위해 User-Agent 브라우저 헤더 주입
     const url = `https://query1.finance.yahoo.com/v8/finance/chart/${targetTicker}?interval=1d&range=1y`;
     const res = await fetch(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+        'Accept': 'application/json'
+      },
       next: { revalidate: 3600 } // 1시간 캐싱 적용
     });
 
