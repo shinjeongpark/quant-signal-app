@@ -1,0 +1,8 @@
+# .vercelignore
+# Vercel 클라우드 서버에 빌드 업로드 시 불필요한 폴더를 제외합니다.
+# 특히 scripts 폴더 안의 Python 파일(.py)이 업로드되면 Vercel이 Python 프로젝트로 오인하여 
+# 빌드 오류를 낼 수 있으므로 이를 완전히 제외합니다.
+
+scripts/
+.github/
+supabase/
