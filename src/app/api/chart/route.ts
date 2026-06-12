@@ -31,25 +31,34 @@ export async function GET(request: NextRequest) {
 
   try {
     // 야후 파이낸스 일봉 API 호출 (최근 1년 범위, 일일 주기)
-    // [보안 및 안정성]: 야후 파이낸스가 봇으로 차단하는 것을 방지하기 위해 User-Agent 브라우저 헤더 주입
-    const url = `https://query1.finance.yahoo.com/v8/finance/chart/${targetTicker}?interval=1d&range=1y`;
+    // [보안 및 안정성]:
+    //   - query1 대신 query2 도메인을 활용하여 IP 차단 우회 시도
+    //   - 야후 파이낸스가 봇으로 차단하는 것을 방지하기 위해 User-Agent 브라우저 헤더 주입
+    //   - cache: 'no-store' 설정을 통해 이전 실패 응답 캐싱으로 인한 지속적 오류 상태 완벽 방지
+    const url = `https://query2.finance.yahoo.com/v8/finance/chart/${targetTicker}?interval=1d&range=1y`;
     const res = await fetch(url, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
-        'Accept': 'application/json'
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+        'Accept': 'application/json',
+        'Referer': 'https://finance.yahoo.com/'
       },
-      next: { revalidate: 3600 } // 1시간 캐싱 적용
+      cache: 'no-store'
     });
 
     if (!res.ok) {
-      return NextResponse.json({ error: "주가 정보를 로드하지 못했습니다." }, { status: 500 });
+      const errorBody = await res.text();
+      console.error("[야후 파이낸스 API 오류]", res.status, errorBody);
+      return NextResponse.json({ 
+        error: `주가 정보 로드 실패 (HTTP ${res.status})`,
+        details: errorBody.slice(0, 100) 
+      }, { status: res.status });
     }
 
     const data = await res.json();
     const result = data?.chart?.result?.[0];
     
     if (!result) {
-      return NextResponse.json({ error: "유효한 데이터를 찾을 수 없습니다." }, { status: 404 });
+      return NextResponse.json({ error: "유효한 차트 데이터를 찾을 수 없습니다." }, { status: 404 });
     }
 
     const timestamps = result.timestamp || [];
